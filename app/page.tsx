@@ -1,5 +1,9 @@
-import React from "react";
+import KanbanBoard from "@/components/Kanban/KanbanBoard";
 
 export default function Home() {
-  return <div>Home</div>;
+  return (
+    <div>
+      <KanbanBoard />
+    </div>
+  );
 }
