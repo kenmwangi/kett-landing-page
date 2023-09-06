@@ -3,9 +3,15 @@ import { SignUpInput, SignUpSchema } from "@/utils/validations/signUpSchema";
 import React from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import ErrorText from "./ErrorText";
+import { TextField } from "./TextField";
 
 export default function SignUpForm() {
-  const { register, handleSubmit } = useForm<SignUpInput>({
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm<SignUpInput>({
     resolver: zodResolver(SignUpSchema),
   });
   return (
@@ -15,64 +21,44 @@ export default function SignUpForm() {
           <div className="flex flex-col items-center justify-center p-8">
             <h1 className="text-2xl font-bold text-gray-900">Sign up</h1>
             <div className="mt-4 w-full">
-              <label
-                htmlFor="name"
-                className="block text-xs md:text-sm font-medium text-gray-700"
-              >
-                Name
-              </label>
-              <input
+              <TextField
                 {...register("name")}
-                type="text"
-                className="mt-1 w-full rounded-md border border-gray-300 px-2 py-2 text-sm text-gray-900 focus:outline-none focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
+                label="name"
+                error={errors.name?.message}
               />
             </div>
 
             {/* Email */}
             <div className="mt-4 w-full">
-              <label
-                htmlFor="email"
-                className="block text-xs md:text-sm font-medium text-gray-700"
-              >
-                Email
-              </label>
-              <input
+              <TextField
                 {...register("email")}
                 type="email"
-                className="mt-1 w-full rounded-md border border-gray-300 px-2 py-2 text-sm text-gray-900 focus:outline-none focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
+                label="Email"
+                error={errors.email?.message}
               />
             </div>
 
             {/* Password */}
             <div className="mt-4 w-full">
-              <label
-                htmlFor="password"
-                className="block text-xs md:text-sm font-medium text-gray-700"
-              >
-                Password
-              </label>
-              <input
+              <TextField
                 {...register("password")}
                 type="password"
-                className="mt-1 w-full rounded-md border border-gray-300 px-2 py-2 text-sm text-gray-900 focus:outline-none focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
+                label="Password"
+                error={errors.password?.message}
               />
             </div>
             {/* Password Confirmation */}
             <div className="mt-4 w-full">
-              <label
-                htmlFor="password"
-                className="block text-xs md:text-sm font-medium text-gray-700"
-              >
-                Password Confirmation
-              </label>
-              <input
+              <TextField
                 {...register("confirmPassword")}
                 type="password"
-                className="mt-1 w-full rounded-md border border-gray-300 px-2 py-2 text-sm text-gray-900 focus:outline-none focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
+                label="Confirm Password"
+                error={errors.confirmPassword?.message}
               />
             </div>
             <div className="mt-4 w-full">
               <button
+                disabled={isSubmitting}
                 type="submit"
                 className="w-full rounded-md bg-blue-500 hover:bg-blue-600 transition-colors ease-in-out delay-100 px-3 py-4 text-white focus:bg-blue-600 focus:outline-none"
               >
