@@ -14,11 +14,19 @@ import {
   useSensor,
   useSensors,
 } from "@dnd-kit/core";
-import { SortableContext } from "@dnd-kit/sortable";
+import { SortableContext, arrayMove } from "@dnd-kit/sortable";
+import { createPortal } from "react-dom";
 
 export default function KanbanBoard() {
   const [columns, setColumns] = useState<Column[]>([]);
   const [activeColumn, setActiveColumn] = useState<Column | null>(null);
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 3, // 3px
+      },
+    })
+  );
 
   const columnsId = useMemo(() => columns.map((col) => col.id), [columns]);
 
@@ -39,8 +47,17 @@ export default function KanbanBoard() {
 
   //   DELETE COLUMN
   function deleteColumn(id: Id) {
-    const filteredColumn = columns.filter((col) => col.id !== id);
-    setColumns(filteredColumn);
+    const filteredColumns = columns.filter((col) => col.id !== id);
+    setColumns(filteredColumns);
+  }
+
+  // UPDATE COLUMN
+  function updateColumn(id: Id, title: string) {
+    const newColumns = columns.map((col) => {
+      if (col.id !== id) return col;
+      return { ...col, title };
+    });
+    setColumns(newColumns);
   }
 
   function onDragStart(event: DragStartEvent) {
@@ -48,6 +65,32 @@ export default function KanbanBoard() {
       setActiveColumn(event.active.data.current.column);
       return;
     }
+  }
+
+  function onDragEnd(event: DragEndEvent) {
+    setActiveColumn(null);
+    // setActiveTask(null);
+
+    const { active, over } = event;
+    if (!over) return;
+
+    const activeId = active.id;
+    const overId = over.id;
+
+    if (activeId === overId) return;
+
+    const isActiveAColumn = active.data.current?.type === "Column";
+    if (!isActiveAColumn) return;
+
+    console.log("DRAG END");
+
+    setColumns((columns) => {
+      const activeColumnIndex = columns.findIndex((col) => col.id === activeId);
+
+      const overColumnIndex = columns.findIndex((col) => col.id === overId);
+
+      return arrayMove(columns, activeColumnIndex, overColumnIndex);
+    });
   }
   return (
     <section
@@ -61,18 +104,18 @@ export default function KanbanBoard() {
     overflow-y-hidden 
     px-[40px]"
     >
-      <DndContext onDragStart={onDragStart}>
+      <DndContext onDragStart={onDragStart} onDragEnd={onDragEnd}>
         <div className="m-auto flex gap-4">
-          <div className="flex gap-4">
+          <div className="flex gap-4 text-white">
             <SortableContext items={columnsId}>
               {columns.map((column) => {
                 return (
-                  <div key={column.id} className="text-white">
-                    <ColumnContainer
-                      column={column}
-                      deleteColumn={deleteColumn}
-                    />
-                  </div>
+                  <ColumnContainer
+                    key={column.id}
+                    column={column}
+                    deleteColumn={deleteColumn}
+                    updateColumn={updateColumn}
+                  />
                 );
               })}
             </SortableContext>
@@ -102,6 +145,20 @@ export default function KanbanBoard() {
             Add Column
           </button>
         </div>
+
+        {typeof document !== "undefined" &&
+          createPortal(
+            <DragOverlay>
+              {activeColumn && (
+                <ColumnContainer
+                  column={activeColumn}
+                  deleteColumn={deleteColumn}
+                  updateColumn={updateColumn}
+                />
+              )}
+            </DragOverlay>,
+            document.body
+          )}
       </DndContext>
     </section>
   );
