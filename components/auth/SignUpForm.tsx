@@ -1,10 +1,17 @@
+"use client";
+import { SignUpInput, SignUpSchema } from "@/utils/validations/signUpSchema";
 import React from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 export default function SignUpForm() {
+  const { register, handleSubmit } = useForm<SignUpInput>({
+    resolver: zodResolver(SignUpSchema),
+  });
   return (
     <section className="flex min-h-screen items-center justify-center bg-gradient-to-b from-blue-400 to-blue-100 p-12">
       <div className="w-full max-w-xl rounded-xl bg-gray-50 shadow-lg">
-        <form>
+        <form onSubmit={handleSubmit((data) => console.log(data))}>
           <div className="flex flex-col items-center justify-center p-8">
             <h1 className="text-2xl font-bold text-gray-900">Sign up</h1>
             <div className="mt-4 w-full">
@@ -15,6 +22,7 @@ export default function SignUpForm() {
                 Name
               </label>
               <input
+                {...register("name")}
                 type="text"
                 className="mt-1 w-full rounded-md border border-gray-300 px-2 py-2 text-sm text-gray-900 focus:outline-none focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
               />
@@ -29,6 +37,7 @@ export default function SignUpForm() {
                 Email
               </label>
               <input
+                {...register("email")}
                 type="email"
                 className="mt-1 w-full rounded-md border border-gray-300 px-2 py-2 text-sm text-gray-900 focus:outline-none focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
               />
@@ -43,6 +52,7 @@ export default function SignUpForm() {
                 Password
               </label>
               <input
+                {...register("password")}
                 type="password"
                 className="mt-1 w-full rounded-md border border-gray-300 px-2 py-2 text-sm text-gray-900 focus:outline-none focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
               />
@@ -56,6 +66,7 @@ export default function SignUpForm() {
                 Password Confirmation
               </label>
               <input
+                {...register("confirmPassword")}
                 type="password"
                 className="mt-1 w-full rounded-md border border-gray-300 px-2 py-2 text-sm text-gray-900 focus:outline-none focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
               />
