@@ -1,16 +1,46 @@
-import "./globals.css";
-import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Metadata } from "next";
+import "./css/globals.css";
+import { Inter, Mulish } from "next/font/google";
+import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
 
-const inter = Inter({ subsets: ["latin"] });
+const inter = Mulish({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: {
-    default: "Home | KETT Product",
-    template: "%s | KETT Product",
+    template: `%s | KETT`,
+    default: "Home | KETT",
   },
   description:
-    "Ken's Error Tracking Tool is an easy way to document issues, bugs and software errors for easy fixation and references",
+    "Add KETT integration to a website that shows and tracks errors and issues in your application and softwares.",
+  metadataBase: new URL("http://localhost:3000"),
+  openGraph: {
+    title: "KETT",
+    description:
+      "Add KETT integration to a website that shows tracking errors and issues on you application and software interactions with the website.",
+    url: "",
+    siteName: "KETT",
+    locale: "en-US",
+    type: "website",
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
+  twitter: {
+    title: "Ken Mwangi",
+    card: "summary_large_image",
+  },
+  icons: {
+    shortcut: "/favicon.ico",
+  },
 };
 
 export default function RootLayout({
@@ -20,7 +50,13 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={`${inter.className} `}>{children}</body>
+      <body className={inter.className}>
+        <div className="border-b-[1px] border-neutral-50">
+          <Navbar />
+        </div>
+        {children}
+        <Footer />
+      </body>
     </html>
   );
 }
